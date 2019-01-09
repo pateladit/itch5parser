@@ -432,12 +432,20 @@ int main(int argc, char *argv[])
           uint32_t shares = parse_uint32(m+20);
           parse_stock(24)
           uint32_t price = parse_uint32(m+32);
-          fprintf(f_output[10],
+          
+		  /*fprintf(f_output[10],
             "%c,%u,%u,%llu.%09llu,%llu,%c,%u,%s,%u.%04u\n",
             t, stock_locate, tracking_number,
             timestamp/1000000000, timestamp%1000000000,
             order_reference_number, m[19], shares, stock,
-            price/10000, price%10000);
+            price/10000, price%10000);*/
+		  
+		  // Adit modification for InfluxCLI import
+		  fprintf(f_output[10],
+		    "%c,StockLoc=%u,OrderRef=%llu,Stock=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu\n",
+			t, stock_locate, order_reference_number, stock, tracking_number, m[19], shares, price/10000, price%10000, timestamp
+		  );
+		  
           total_type[10]++;
           total++;
         }
