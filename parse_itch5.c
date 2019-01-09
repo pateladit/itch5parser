@@ -443,8 +443,7 @@ int main(int argc, char *argv[])
 		  // Adit modification for InfluxCLI import
 		  fprintf(f_output[10],
 		    "%c,StockLoc=%u,OrderRef=%llu,Stock=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu\n",
-			t, stock_locate, order_reference_number, stock, tracking_number, m[19], shares, price/10000, price%10000, timestamp
-		  );
+			t, stock_locate, order_reference_number, stock, tracking_number, m[19], shares, price/10000, price%10000, timestamp);
 		  
           total_type[10]++;
           total++;
@@ -460,13 +459,20 @@ int main(int argc, char *argv[])
           parse_stock(24)
           uint32_t price = parse_uint32(m+32);
           parse_attribution(36)
-          fprintf(f_output[11],
+          
+		  /*fprintf(f_output[11],
             "%c,%u,%u,%llu.%09llu,%llu,%c,%u,%s,%u.%04u,%s\n",
             t, stock_locate, tracking_number,
             timestamp/1000000000, timestamp%1000000000,
             order_reference_number, m[19], shares, stock,
-            price/10000, price%10000, attribution);
-          total_type[11]++;
+            price/10000, price%10000, attribution);*/
+          
+		  // Adit modification for InfluxCLI import
+		  fprintf(f_output[11],
+		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s,Attribution=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu\n",
+		  t, stock_locate, order_reference_number, stock, attribution, tracking_number, m[19], shares, price/10000, price%10000, timestamp);
+		  
+		  total_type[11]++;
           total++;
         }
         break;
@@ -478,12 +484,18 @@ int main(int argc, char *argv[])
           uint64_t order_reference_number = parse_uint64(m+11);
           uint32_t executed_shares = parse_uint32(m+19);
           uint64_t match_number = parse_uint64(m+23);
-          fprintf(f_output[12],
+          
+		  fprintf(f_output[12],
             "%c,%u,%u,%llu.%09llu,%llu,%u,%llu\n",
             t, stock_locate, tracking_number,
             timestamp/1000000000, timestamp%1000000000,
             order_reference_number, executed_shares, match_number);
-          total_type[12]++;
+          
+		  fprintf(f_output[12],
+		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u\n",
+		  t, stock_locate, order_reference_number, );
+		  
+		  total_type[12]++;
           total++;
         }
         break;
