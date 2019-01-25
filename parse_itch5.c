@@ -16,6 +16,7 @@ license that can be found in the LICENSE file.
 #include <stdint.h>
 #include <stdbool.h>
 #include <libgen.h>
+#include <math.h>
 
 #if defined(__linux__)
 #include <byteswap.h>
@@ -97,6 +98,11 @@ for (i=0; i<4; i++) { \
     attribution[i] = m[i+(n)]; \
   } \
 }
+
+#define __USE_XOPEN
+#define _GNU_SOURCE
+
+void substring(char[], char[], int, int);
 
 int main(int argc, char *argv[])
 {
@@ -194,6 +200,23 @@ int main(int argc, char *argv[])
   FILE *f_output[22];
   char csv_filename[32];
   char csv_full_path[256];
+  char year[10], mon[10], day[10], dateval[50];
+
+  substring(argv[1], year, 11, 2);
+  substring(argv[1], mon, 7, 2);
+  substring(argv[1], day, 9, 2);
+  snprintf(dateval, sizeof dateval, "20%s-%s-%s 00:00:00", year, mon, day);
+
+  struct tm tm;
+  time_t epoch;
+
+  if(strptime(dateval, "%Y-%m-%d %H:%M:%S", &tm) != NULL){
+    epoch = mktime(&tm);
+  } else {
+    printf("\nError in Epoch conversion\n\n");
+  }
+
+  printf("\n Epoch seconds for Date 20%s/%s/%s are : %ld\n", year, mon, day, (long)epoch);
 
   // open files only for specified message types
   for (i=0; i<22; i++) {
@@ -432,19 +455,19 @@ int main(int argc, char *argv[])
           uint32_t shares = parse_uint32(m+20);
           parse_stock(24)
           uint32_t price = parse_uint32(m+32);
-          
-		  /*fprintf(f_output[10],
+
+	  /*fprintf(f_output[10],
             "%c,%u,%u,%llu.%09llu,%llu,%c,%u,%s,%u.%04u\n",
             t, stock_locate, tracking_number,
             timestamp/1000000000, timestamp%1000000000,
             order_reference_number, m[19], shares, stock,
             price/10000, price%10000);*/
-		  
-		  // Adit modification for InfluxCLI import
-		  fprintf(f_output[10],
-		    "%c,StockLoc=%u,OrderRef=%llu,Stock=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu\n",
-			t, stock_locate, order_reference_number, stock, tracking_number, m[19], shares, price/10000, price%10000, timestamp);
-		  
+
+	  // Adit modification for InfluxCLI import
+	  fprintf(f_output[10],
+		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu.%09llu\n",
+		  t, stock_locate, order_reference_number, stock, tracking_number, m[19], shares, price/10000, price%10000, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
+
           total_type[10]++;
           total++;
         }
@@ -459,20 +482,20 @@ int main(int argc, char *argv[])
           parse_stock(24)
           uint32_t price = parse_uint32(m+32);
           parse_attribution(36)
-          
-		  /*fprintf(f_output[11],
+
+	  /*fprintf(f_output[11],
             "%c,%u,%u,%llu.%09llu,%llu,%c,%u,%s,%u.%04u,%s\n",
             t, stock_locate, tracking_number,
             timestamp/1000000000, timestamp%1000000000,
             order_reference_number, m[19], shares, stock,
             price/10000, price%10000, attribution);*/
-          
-		  // Adit modification for InfluxCLI import
-		  fprintf(f_output[11],
-		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s,Attribution=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu\n",
-		  t, stock_locate, order_reference_number, stock, attribution, tracking_number, m[19], shares, price/10000, price%10000, timestamp);
-		  
-		  total_type[11]++;
+
+	  // Adit modification for InfluxCLI import
+	  fprintf(f_output[11],
+		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s,Attribution=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu.%09llu\n",
+		  t, stock_locate, order_reference_number, stock, attribution, tracking_number, m[19], shares, price/10000, price%10000, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
+
+	  total_type[11]++;
           total++;
         }
         break;
@@ -484,19 +507,19 @@ int main(int argc, char *argv[])
           uint64_t order_reference_number = parse_uint64(m+11);
           uint32_t executed_shares = parse_uint32(m+19);
           uint64_t match_number = parse_uint64(m+23);
-          
-		  /*fprintf(f_output[12],
+
+	  /*fprintf(f_output[12],
             "%c,%u,%u,%llu.%09llu,%llu,%u,%llu\n",
             t, stock_locate, tracking_number,
             timestamp/1000000000, timestamp%1000000000,
             order_reference_number, executed_shares, match_number);*/
-		
-		  // Adit modification for InfluxCLI import         
-		  fprintf(f_output[12],
-		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu %llu\n",
-		  t, stock_locate, order_reference_number, tracking_number, executed_shares, match_number, timestamp);
-		  
-		  total_type[12]++;
+
+	  // Adit modification for InfluxCLI import
+	  fprintf(f_output[12],
+		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu %llu.%09llu\n",
+		  t, stock_locate, order_reference_number, tracking_number, executed_shares, match_number, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
+
+	  total_type[12]++;
           total++;
         }
         break;
@@ -509,21 +532,21 @@ int main(int argc, char *argv[])
           uint32_t executed_shares = parse_uint32(m+19);
           uint64_t match_number = parse_uint64(m+23);
           uint32_t execution_price = parse_uint32(m+32);
-          
-		  /*fprintf(f_output[13],
+
+	  /*fprintf(f_output[13],
             "%c,%u,%u,%llu.%09llu,%llu,%u,%llu,%c,%u.%04u\n",
             t, stock_locate, tracking_number,
             timestamp/1000000000, timestamp%1000000000,
             order_reference_number, executed_shares,
             match_number, m[31],
             execution_price/10000, execution_price%10000);*/
-          
-		  // Adit modification for InfluxCLI import
-		  fprintf(f_output[13],
-		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu,Printable=%c,ExecutionPrice=%u.%04u %llu\n",
-		  t, stock_locate, order_reference_number, tracking_number, executed_shares, match_number, m[31], execution_price/10000, execution_price%10000. timestamp);
-		  
-		  total_type[13]++;
+
+	  // Adit modification for InfluxCLI import
+	  fprintf(f_output[13],
+		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu,Printable=%c,ExecutionPrice=%u.%04u %llu.%09llu\n",
+		  t, stock_locate, order_reference_number, tracking_number, executed_shares, match_number, m[31], execution_price/10000, execution_price%10000, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
+
+	  total_type[13]++;
           total++;
         }
         break;
