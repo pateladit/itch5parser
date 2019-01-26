@@ -465,7 +465,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[10],
-		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu.%09llu\n",
+		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s TrackingNum=%u,BuySellI=\"%c\",Shares=%u,Price=%u.%04u %llu%09llu\n",
 		  t, stock_locate, order_reference_number, stock, tracking_number, m[19], shares, price/10000, price%10000, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
           total_type[10]++;
@@ -492,7 +492,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[11],
-		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s,Attribution=%s TrackingNum=%u,BuySellI=%c,Shares=%u,Price=%u.%04u %llu.%09llu\n",
+		  "%c,StockLoc=%u,OrderRef=%llu,Stock=%s,Attribution=%s TrackingNum=%u,BuySellI=\"%c\",Shares=%u,Price=%u.%04u %llu%09llu\n",
 		  t, stock_locate, order_reference_number, stock, attribution, tracking_number, m[19], shares, price/10000, price%10000, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
 	  total_type[11]++;
@@ -516,7 +516,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[12],
-		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu %llu.%09llu\n",
+		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu %llu%09llu\n",
 		  t, stock_locate, order_reference_number, tracking_number, executed_shares, match_number, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
 	  total_type[12]++;
@@ -543,7 +543,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[13],
-		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu,Printable=%c,ExecutionPrice=%u.%04u %llu.%09llu\n",
+		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,ExecutedShares=%u,MatchNumber=%llu,Printable=\"%c\",ExecutionPrice=%u.%04u %llu%09llu\n",
 		  t, stock_locate, order_reference_number, tracking_number, executed_shares, match_number, m[31], execution_price/10000, execution_price%10000, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
 	  total_type[13]++;
@@ -566,7 +566,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[14],
-		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,CancelledShares=%u %llu.%09llu\n",
+		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u,CancelledShares=%u %llu%09llu\n",
 		  t, stock_locate, order_reference_number, tracking_number, cancelled_shares, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
 	  total_type[14]++;
@@ -588,7 +588,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[15],
-		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u %llu.%09llu\n",
+		  "%c,StockLoc=%u,OrderRef=%llu TrackingNum=%u %llu%09llu\n",
 		  t, stock_locate, order_reference_number, tracking_number, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
 	  total_type[15]++;
@@ -614,7 +614,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[16],
-		  "%c,StockLoc=%u,OrigOrderRef=%llu,NewOrderRef=%llu TrackingNum=%u,Shares=%u,Price=%u.%04u %llu.%09llu\n",
+		  "%c,StockLoc=%u,OrigOrderRef=%llu,NewOrderRef=%llu TrackingNum=%u,Shares=%u,Price=%u.%04u %llu%09llu\n",
 		  t, stock_locate, original_order_reference_number, new_order_reference_number, tracking_number, shares, price/10000, price%10000, (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
 	  total_type[16]++;
@@ -641,7 +641,7 @@ int main(int argc, char *argv[])
 
 	  // Adit modification for InfluxCLI import
 	  fprintf(f_output[17],
-		  "%c,StockLoc=%u,BuySellI=%c,Stock=%s TrackingNum=%u,OrderRef=%llu,Shares=%u,Price=%u.%04u,MatchNumber=%llu %llu.%09llu\n",
+		  "%c,StockLoc=%u,BuySellI=%c,Stock=%s TrackingNum=%u,OrderRef=%llu,Shares=%u,Price=%u.%04u,MatchNumber=%llu %llu%09llu\n",
 		  t, stock_locate, m[19], stock, tracking_number, order_reference_number, shares, price/10000, price%10000, match_number,  (timestamp/1000000000 + (long)epoch), timestamp%1000000000);
 
 	  total_type[17]++;
