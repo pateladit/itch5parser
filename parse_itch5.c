@@ -239,6 +239,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error opening file %s: %s\n", csv_full_path, strerror(errno));
         exit(1);
       }
+      fprintf(f_output[i], "# DDL\nCREATE DATABASE NASDAQData\n# DML\n# CONTEXT-DATABASE:NASDAQData")
     }
   }
   free(argv1);
