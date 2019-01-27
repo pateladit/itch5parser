@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
   time_t epoch;
 
   if(strptime(dateval, "%Y-%m-%d %H:%M:%S", &tm) != NULL){
-    epoch = mktime(&tm);
+    epoch = mktime(&tm) - timezone + 3600;
   } else {
     printf("\nError in Epoch conversion\n\n");
   }
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error opening file %s: %s\n", csv_full_path, strerror(errno));
         exit(1);
       }
-      fprintf(f_output[i], "# DDL\nCREATE DATABASE NASDAQData\n# DML\n# CONTEXT-DATABASE:NASDAQData")
+      fprintf(f_output[i], "# DDL\nCREATE DATABASE NASDAQData\n# DML\n# CONTEXT-DATABASE:NASDAQData\n");
     }
   }
   free(argv1);
