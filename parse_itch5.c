@@ -99,9 +99,6 @@ for (i=0; i<4; i++) { \
   } \
 }
 
-#define __USE_XOPEN
-#define _GNU_SOURCE
-
 void substring(char[], char[], int, int);
 
 int main(int argc, char *argv[])
@@ -192,31 +189,39 @@ int main(int argc, char *argv[])
   }
 
   time_t start =  time(NULL);
-
   printf("=========== Parsing ITCH v5.0 starts ===========\n");
   printf("Input file: %s\n", input_file_name);
   printf("Output folder: %s\n", argv[2]);
 
-  FILE *f_output[22];
+  FILE *f_output[22], *fp;
   char csv_filename[32];
   char csv_full_path[256];
-  char year[10], mon[10], day[10], dateval[50];
+  char year[10], mon[10], day[10], dateval[50], path[1035], epochstr[50], command[1000];
+  long int epoch;
 
   substring(argv[1], year, 11, 2);
   substring(argv[1], mon, 7, 2);
   substring(argv[1], day, 9, 2);
-  snprintf(dateval, sizeof dateval, "20%s-%s-%s 00:00:00", year, mon, day);
 
-  struct tm tm;
-  time_t epoch;
+  snprintf(dateval, sizeof dateval, "%s/%s/20%s 00:00:00 -0500", mon, day, year);
+  sprintf(command, "date +%%s -ud\"%s\"",dateval);
 
-  if(strptime(dateval, "%Y-%m-%d %H:%M:%S", &tm) != NULL){
-    epoch = mktime(&tm) - timezone + 3600;
-  } else {
-    printf("\nError in Epoch conversion\n\n");
+  /* Open the command for reading. */
+  fp=popen(command, "r");
+  if (fp == NULL) {
+    printf("Failed to run command\n" );
+    exit(1);
   }
 
-  printf("\n Epoch seconds for Date 20%s/%s/%s are : %ld\n", year, mon, day, (long)epoch);
+  /* Read the output a line at a time - output it. */
+  while (fgets(path, sizeof(path)-1, fp) != NULL) {
+    snprintf(epochstr, sizeof epochstr, "%s", path);
+    epoch = atoi(epochstr);
+    printf("Epoch seconds for %s are: %ld\n", dateval, epoch);
+  }
+
+  /* close */
+  pclose(fp);
 
   // open files only for specified message types
   for (i=0; i<22; i++) {
